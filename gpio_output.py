@@ -2,7 +2,7 @@ import pigpio
 
 pi = pigpio.pi()
 
-gpio_pin = 14
+gpio_pin = 17
 pi.set_mode(gpio_pin, pigpio.OUTPUT)
 
 while True:
