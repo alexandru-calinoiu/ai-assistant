@@ -1,0 +1,1 @@
+from SimpleCv import Camera
