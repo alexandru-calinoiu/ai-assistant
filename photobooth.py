@@ -1,5 +1,8 @@
 import pigpio
 import cv2
+import requests
+import datetime
+import json
 
 
 class pressstate:
@@ -47,6 +50,41 @@ class ledcontrol(gpiocontrol):
         self.pi.write(self.gpio_pin, 0)
 
 
+class facedetector:
+    HAAR_CASCADE_PATH = ''
+
+    detect_image_path = ''
+    haar_cascade_path = ''
+
+    def __init__(self, detect_image_path='detect.png', haar_cascade_path='trainer/haarcascade_frontalface_alt.xml'):
+        self.detect_image_path = detect_image_path
+        self.haar_cascade_path = haar_cascade_path
+
+    def detect(self, img):
+        cascade = cv2.CascadeClassifier(self.haar_cascade_path)
+        rects = cascade.detectMultiScale(img, 1.1, 4, 0, (30, 30))
+        rects = [] if len(rects) == 0 else rects
+        self.box(img, rects)
+
+    def box(self, img, rects):
+        for x1, y1, x2, y2 in rects:
+            cv2.rectangle(img, (x1, y1), (x2, y2), (127, 125, 0), 2)
+        cv2.imwrite(self.detect_image_path, img)
+
+
+class agilebot:
+    base_url = ''
+
+    def __init__(self, base_url='http://109.103.226.38:8080/hubot'):
+        self.base_url = base_url
+
+    def photo_taken(self, room='5489460edb8155e6700ddfdc'):
+        url = self.base_url + '/aidoorkeeper/photo/' + room
+        data = {"date": datetime.datetime.utcnow().isoformat()}
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        requests.post(url, data=json.dumps(data), headers=headers)
+
+
 def run():
     pi = pigpio.pi()
 
@@ -73,7 +111,10 @@ def run():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     ret, img = cap.read()
-    cv2.imwrite('test.png', img)
+    cv2.imwrite('picture.png', img)
+
+    bot = agilebot()
+    bot.photo_taken()
 
     cap.release()
     led_control.off()
