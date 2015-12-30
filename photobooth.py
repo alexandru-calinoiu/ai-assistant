@@ -41,7 +41,7 @@ class ledcontrol(gpiocontrol):
 
     def off(self):
         self.setup()
-        self.pi.write(self.gpio_pin, 1)
+        self.pi.write(self.gpio_pin, 0)
 
 def run():
     pi = pigpio.pi()
