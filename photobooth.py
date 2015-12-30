@@ -11,6 +11,7 @@ class pressstate:
     def not_pressed(self):
         return self.pressed == False
 
+
 class gpiocontrol(object):
     pi = None
     gpio_pin = None
@@ -19,8 +20,9 @@ class gpiocontrol(object):
         self.pi = pi
         self.gpio_pin = gpio_pin
 
+
 class buttoncontrol(gpiocontrol):
-    def __init__(self, pi, gpio_pin = 4):
+    def __init__(self, pi, gpio_pin=4):
         super(buttoncontrol, self).__init__(pi, gpio_pin)
 
     def setup(self, rising_callback):
@@ -28,8 +30,9 @@ class buttoncontrol(gpiocontrol):
         self.pi.set_pull_up_down(self.gpio_pin, pigpio.PUD_DOWN)
         return self.pi.callback(self.gpio_pin, pigpio.RISING_EDGE, rising_callback)
 
+
 class ledcontrol(gpiocontrol):
-    def __init__(self, pi, gpio_pin = 17):
+    def __init__(self, pi, gpio_pin=17):
         super(ledcontrol, self).__init__(pi, gpio_pin)
 
     def setup(self):
@@ -42,6 +45,7 @@ class ledcontrol(gpiocontrol):
     def off(self):
         self.setup()
         self.pi.write(self.gpio_pin, 0)
+
 
 def run():
     pi = pigpio.pi()
@@ -73,5 +77,6 @@ def run():
 
     cap.release()
     led_control.off()
+
 
 run()
